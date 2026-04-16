@@ -40,12 +40,26 @@ const { title, description } = Astro.props;
     <p>© 2024-2026 我的博客 · 使用 <a href="https://astro.build" target="_blank">Astro</a> 构建 · 托管于 <a href="https://netlify.com" target="_blank">Netlify</a></p>
   </footer>
 
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <script>
     const toggle = document.getElementById('menu-toggle');
     const links = document.getElementById('nav-links');
     toggle?.addEventListener('click', () => {
       links?.classList.toggle('open');
     });
+
+    // 处理 Netlify Identity 确认/邀请回调
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on('init', (user) => {
+        if (!user) {
+          window.netlifyIdentity.on('login', () => {
+            document.location.href = '/admin/';
+          });
+        } else {
+          // 已登录用户访问首页时自动跳转到 admin（可选）
+        }
+      });
+    }
   </script>
 </body>
 </html>
