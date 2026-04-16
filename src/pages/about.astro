@@ -5,8 +5,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="关于">
   <div class="container">
     <div class="about-section">
-      <h2>👋 关于我</h2>
-      <p style="line-height:1.8; color:var(--color-text-secondary);">
+      <h2>关于我</h2>
+      <p style="line-height:1.85; color:var(--color-text-secondary);">
         你好！欢迎来到我的个人博客。我是一名热爱技术的开发者，
         主要关注 Java 后端开发、前端工程化和数据治理等领域。
         这个博客用来记录学习笔记、技术探索和日常思考。
@@ -14,7 +14,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
 
     <div class="about-section">
-      <h2>🛠 技术栈</h2>
+      <h2>技术栈</h2>
       <div class="skill-grid">
         <div class="skill-item">Java</div>
         <div class="skill-item">Spring Boot</div>
@@ -30,31 +30,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
 
     <div class="about-section">
-      <h2>📚 当前关注</h2>
+      <h2>当前关注</h2>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; color:var(--color-text-secondary);">
-        <li>🔹 深入学习《数据治理导论》课程</li>
-        <li>🔹 JWT Token 安全分析与最佳实践</li>
-        <li>🔹 SBTI 风格测试网站开发</li>
-        <li>🔹 小团队 CI/CD 流程搭建</li>
+        <li style="display:flex; align-items:center; gap:10px;">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--color-primary); flex-shrink:0;"></span>
+          深入学习《数据治理导论》课程
+        </li>
+        <li style="display:flex; align-items:center; gap:10px;">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--color-accent); flex-shrink:0;"></span>
+          JWT Token 安全分析与最佳实践
+        </li>
+        <li style="display:flex; align-items:center; gap:10px;">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--color-primary); flex-shrink:0;"></span>
+          SBTI 风格测试网站开发
+        </li>
+        <li style="display:flex; align-items:center; gap:10px;">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--color-accent); flex-shrink:0;"></span>
+          小团队 CI/CD 流程搭建
+        </li>
       </ul>
     </div>
 
     <div class="about-section">
-      <h2>🌐 联系方式</h2>
+      <h2>联系方式</h2>
       <p style="color:var(--color-text-secondary);">
         GitHub: <a href="https://github.com" target="_blank">github.com</a><br/>
         Email: hello@example.com
-      </p>
-    </div>
-
-    <div class="about-section">
-      <h2>⚙️ 关于本站</h2>
-      <p style="color:var(--color-text-secondary); line-height:1.8;">
-        本站使用 <a href="https://astro.build" target="_blank">Astro</a> 构建，
-        集成 <a href="https://decapcms.org" target="_blank">Decap CMS</a> 实现浏览器端写作，
-        托管于 <a href="https://netlify.com" target="_blank">Netlify</a>。
-        所有文章均为 Markdown 格式，通过 Git 进行版本管理。
-        访问 <a href="/admin">/admin</a> 即可进入文章管理后台。
       </p>
     </div>
   </div>

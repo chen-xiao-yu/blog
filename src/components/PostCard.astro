@@ -11,17 +11,24 @@ const { title, description, date, tags, slug } = Astro.props;
 
 const formatDate = (d: Date) => d.toLocaleDateString('zh-CN', {
   year: 'numeric',
-  month: 'long',
+  month: 'short',
   day: 'numeric',
 });
+
+// 简易阅读时间估算（按中文 400字/分钟）
+const estimatedMins = Math.max(1, Math.ceil(description.length / 100));
 ---
 
 <li class="post-card">
-  <h2 class="post-card-title">
-    <a href={`/posts/${slug}`}>{title}</a>
-  </h2>
+  <div class="post-card-header">
+    <h2 class="post-card-title">
+      <a href={`/posts/${slug}`}>{title}</a>
+    </h2>
+  </div>
   <div class="post-card-meta">
     <span>{formatDate(date)}</span>
+    <span class="dot"></span>
+    <span>{estimatedMins} 分钟</span>
   </div>
   <p class="post-card-desc">{description}</p>
   <div class="post-card-tags">

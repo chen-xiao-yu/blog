@@ -14,21 +14,48 @@ const { title, description } = Astro.props;
 <html lang="zh-CN">
 <head>
   <BaseHead title={title} description={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- 主题初始化脚本（阻塞式，防止闪烁） -->
+  <script is:inline>
+    (function() {
+      var theme = localStorage.getItem('theme');
+      if (theme === 'dark' || theme === 'light') {
+        document.documentElement.setAttribute('data-theme', theme);
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-inner">
-      <a href="/" class="nav-logo">📝 我的博客</a>
-      <button class="menu-toggle" id="menu-toggle" aria-label="菜单">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="/">首页</a></li>
-        <li><a href="/tags">标签</a></li>
-        <li><a href="/about">关于</a></li>
-      </ul>
+      <a href="/" class="nav-logo">
+        <span class="nav-logo-icon">Z</span>
+        <span>我的博客</span>
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="nav-links">
+          <li><a href="/">首页</a></li>
+          <li><a href="/tags">标签</a></li>
+          <li><a href="/about">关于</a></li>
+        </ul>
+        <button class="theme-toggle" id="theme-toggle" aria-label="切换主题" title="切换亮色/暗色主题">
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </button>
+        <button class="menu-toggle" id="menu-toggle" aria-label="菜单">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
     </div>
   </nav>
 
@@ -37,17 +64,30 @@ const { title, description } = Astro.props;
   </main>
 
   <footer class="footer">
-    <p>© 2024-2026 我的博客 · 使用 <a href="https://astro.build" target="_blank">Astro</a> 构建 · 托管于 <a href="https://netlify.com" target="_blank">Netlify</a></p>
+    <p>© 2024-2026 · 使用 <a href="https://astro.build" target="_blank">Astro</a> 构建 · 托管于 <a href="https://netlify.com" target="_blank">Netlify</a></p>
   </footer>
 
   <script>
+    // 移动端菜单
     const toggle = document.getElementById('menu-toggle');
     const links = document.getElementById('nav-links');
     toggle?.addEventListener('click', () => {
       links?.classList.toggle('open');
     });
 
-    // 仅在线上 Netlify 域名加载 Identity Widget（本地跳过，避免跨域）
+    // 主题切换
+    const themeBtn = document.getElementById('theme-toggle');
+    themeBtn?.addEventListener('click', () => {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark' ||
+        (!html.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      const newTheme = isDark ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // 仅在线上 Netlify 域名加载 Identity Widget
     if (document.location.hostname !== 'localhost' && document.location.hostname !== '127.0.0.1') {
       const script = document.createElement('script');
       script.src = 'https://identity.netlify.com/v1/netlify-identity-widget.js';

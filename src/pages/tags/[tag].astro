@@ -30,8 +30,11 @@ const { tag, posts } = Astro.props;
 <BaseLayout title={`标签: ${tag}`}>
   <div class="container-wide">
     <div class="filter-bar">
-      <h1>标签: {tag}</h1>
-      <a href="/tags" class="tag">← 全部标签</a>
+      <h1 style="display:flex; align-items:center; gap:12px;">
+        <a href="/tags" style="color:var(--color-text-tertiary); font-size:1rem; font-weight:400; text-decoration:none; transition:color 0.2s;">←</a>
+        <span>{tag}</span>
+        <span style="font-size:0.85rem; font-weight:400; color:var(--color-text-tertiary);">{posts.length} 篇</span>
+      </h1>
     </div>
     <ul class="post-list">
       {posts.map((post) => (

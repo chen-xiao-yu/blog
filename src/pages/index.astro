@@ -7,13 +7,28 @@ const allPosts = (await getCollection('blog'))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .map((post) => ({ ...post, slug: post.id }));
+
+// 统计
+const totalPosts = allPosts.length;
+const totalTags = [...new Set(allPosts.flatMap(p => p.data.tags))].length;
+const latestPost = allPosts[0];
 ---
 
 <BaseLayout title="首页">
   <div class="container-wide">
     <section class="hero">
-      <h1 class="hero-title">欢迎来到我的博客</h1>
-      <p class="hero-desc">记录技术探索、学习笔记与思考碎片</p>
+      <h1 class="hero-title">记录 · 探索 · 思考</h1>
+      <p class="hero-desc">技术笔记、学习心得与日常碎片</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">{totalPosts}</div>
+          <div class="hero-stat-label">篇文章</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">{totalTags}</div>
+          <div class="hero-stat-label">个标签</div>
+        </div>
+      </div>
     </section>
 
     <ul class="post-list">
