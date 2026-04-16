@@ -38,8 +38,118 @@ const formatDate = (d: Date) => d.toLocaleDateString('zh-CN', {
       </div>
     </div>
 
+    <!-- 分享区域 -->
+    <div class="share-section">
+      <div class="share-label">分享这篇文章</div>
+      <div class="share-actions">
+        <button class="share-btn" id="btn-copy" title="复制链接">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span>复制链接</span>
+        </button>
+        <button class="share-btn" id="btn-qrcode" title="扫码分享">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><path d="M20 14v3h-3"/><path d="M20 20h-3"/></svg>
+          <span>扫码分享</span>
+        </button>
+        <button class="share-btn" id="btn-native" title="系统分享" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <span>分享</span>
+        </button>
+      </div>
+
+      <!-- 二维码弹窗 -->
+      <div class="qrcode-modal" id="qrcode-modal">
+        <div class="qrcode-card">
+          <div class="qrcode-header">
+            <span>扫码阅读 & 分享</span>
+            <button class="qrcode-close" id="qrcode-close">&times;</button>
+          </div>
+          <div class="qrcode-body" id="qrcode-container"></div>
+          <p class="qrcode-tip">微信扫码 → 点右上角 ··· → 分享到朋友圈</p>
+        </div>
+      </div>
+    </div>
+
     <nav class="post-nav">
       <a href="/">← 返回首页</a>
     </nav>
   </article>
+
+  <script>
+    // 复制链接
+    document.getElementById('btn-copy')?.addEventListener('click', async () => {
+      const url = window.location.href;
+      try {
+        await navigator.clipboard.writeText(url);
+        const btn = document.getElementById('btn-copy');
+        const span = btn?.querySelector('span');
+        if (span) {
+          const orig = span.textContent;
+          span.textContent = '已复制 ✓';
+          setTimeout(() => { span.textContent = orig; }, 2000);
+        }
+      } catch {
+        // fallback
+        const input = document.createElement('input');
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        const btn = document.getElementById('btn-copy');
+        const span = btn?.querySelector('span');
+        if (span) {
+          const orig = span.textContent;
+          span.textContent = '已复制 ✓';
+          setTimeout(() => { span.textContent = orig; }, 2000);
+        }
+      }
+    });
+
+    // Web Share API
+    const nativeBtn = document.getElementById('btn-native');
+    if (navigator.share) {
+      nativeBtn!.style.display = '';
+      nativeBtn?.addEventListener('click', () => {
+        navigator.share({
+          title: document.title,
+          url: window.location.href,
+        }).catch(() => {});
+      });
+    }
+
+    // 二维码
+    const modal = document.getElementById('qrcode-modal');
+    const qrcodeContainer = document.getElementById('qrcode-container');
+
+    document.getElementById('btn-qrcode')?.addEventListener('click', async () => {
+      if (!qrcodeContainer?.hasChildNodes()) {
+        const qrcode = await import('qrcode-generator');
+        const qr = qrcode.default(0, 'M');
+        qr.addData(window.location.href);
+        qr.make();
+        const size = qr.getModuleCount();
+        const cellSize = Math.max(4, Math.floor(200 / size));
+        qrcodeContainer.innerHTML = qr.createSvgTag(cellSize, 2);
+        // 样式调整
+        const svg = qrcodeContainer.querySelector('svg');
+        if (svg) {
+          svg.style.width = '200px';
+          svg.style.height = '200px';
+          svg.style.margin = '0 auto';
+          svg.style.display = 'block';
+        }
+      }
+      modal!.classList.add('open');
+    });
+
+    document.getElementById('qrcode-close')?.addEventListener('click', () => {
+      modal!.classList.remove('open');
+    });
+
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('open');
+      }
+    });
+  </script>
 </BaseLayout>
