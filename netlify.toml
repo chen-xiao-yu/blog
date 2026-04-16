@@ -11,3 +11,4 @@
   for = "/admin/*"
   [headers.values]
     X-Frame-Options = "SAMEORIGIN"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://identity.netlify.com https://unpkg.com; connect-src 'self' https://*.netlify.com https://api.netlify.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:;"
