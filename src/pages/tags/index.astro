@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft);
+
+const tagMap = new Map<string, number>();
+allPosts.forEach((post) => {
+  post.data.tags.forEach((tag) => {
+    tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
+  });
+});
+
+const tags = [...tagMap.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout title="标签">
+  <div class="container">
+    <h1 style="text-align:center; margin-bottom:32px; font-size:1.5rem; font-weight:700;">标签分类</h1>
+    <div class="tag-cloud">
+      {tags.map(([tag, count]) => (
+        <a href={`/tags/${tag}`} class="tag" style="font-size:calc(0.9rem + ${count * 0.08}rem)">
+          {tag} ({count})
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

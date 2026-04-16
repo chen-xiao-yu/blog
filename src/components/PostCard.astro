@@ -1,0 +1,32 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  tags: string[];
+  slug: string;
+}
+
+const { title, description, date, tags, slug } = Astro.props;
+
+const formatDate = (d: Date) => d.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<li class="post-card">
+  <h2 class="post-card-title">
+    <a href={`/posts/${slug}`}>{title}</a>
+  </h2>
+  <div class="post-card-meta">
+    <span>{formatDate(date)}</span>
+  </div>
+  <p class="post-card-desc">{description}</p>
+  <div class="post-card-tags">
+    {tags.map((tag) => (
+      <a href={`/tags/${tag}`} class="tag">{tag}</a>
+    ))}
+  </div>
+</li>
