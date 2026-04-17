@@ -10,8 +10,17 @@ const allPosts = (await getCollection('blog'))
 
 // 统计
 const totalPosts = allPosts.length;
-const totalTags = [...new Set(allPosts.flatMap(p => p.data.tags))].length;
+const allTags = [...new Set(allPosts.flatMap(p => p.data.tags))].sort();
+const totalTags = allTags.length;
 const latestPost = allPosts[0];
+
+// 标签统计（用于显示文章数）
+const tagCounts = new Map<string, number>();
+allPosts.forEach((post) => {
+  post.data.tags.forEach((tag) => {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  });
+});
 ---
 
 <BaseLayout title="首页">
@@ -31,16 +40,94 @@ const latestPost = allPosts[0];
       </div>
     </section>
 
-    <ul class="post-list">
+    <!-- 标签筛选栏 -->
+    <section class="tag-filter-bar" id="tag-filter-bar">
+      <div class="tag-filter-scroll">
+        <button class="tag-filter-btn active" data-tag="all">
+          全部
+          <span class="tag-filter-count">{totalPosts}</span>
+        </button>
+        {allTags.map((tag) => (
+          <button class="tag-filter-btn" data-tag={tag}>
+            {tag}
+            <span class="tag-filter-count">{tagCounts.get(tag)}</span>
+          </button>
+        ))}
+      </div>
+    </section>
+
+    <div class="post-list" id="post-list">
       {allPosts.map((post) => (
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          date={post.data.date}
-          tags={post.data.tags}
-          slug={post.slug}
-        />
+        <div class="post-item" data-tags={post.data.tags.join(',')}>
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            date={post.data.date}
+            tags={post.data.tags}
+            slug={post.slug}
+          />
+        </div>
       ))}
-    </ul>
+    </div>
+
+    <!-- 无结果提示 -->
+    <div class="filter-empty" id="filter-empty" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="40" height="40"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p>没有找到相关文章</p>
+    </div>
   </div>
+
+  <script>
+    const filterBar = document.getElementById('tag-filter-bar');
+    const postList = document.getElementById('post-list');
+    const emptyTip = document.getElementById('filter-empty');
+    const btns = filterBar?.querySelectorAll('.tag-filter-btn');
+    let activeTag = 'all';
+
+    function filterPosts(tag: string) {
+      activeTag = tag;
+      
+      // 更新按钮状态
+      btns?.forEach((btn) => {
+        btn.classList.toggle('active', (btn as HTMLElement).dataset.tag === tag);
+      });
+
+      if (!postList) return;
+
+      const items = postList.querySelectorAll('.post-item');
+      let visibleCount = 0;
+
+      items.forEach((item) => {
+        const el = item as HTMLElement;
+        if (tag === 'all') {
+          el.style.display = '';
+          visibleCount++;
+        } else {
+          const tags = (el.dataset.tags || '').split(',');
+          const match = tags.includes(tag);
+          el.style.display = match ? '' : 'none';
+          if (match) visibleCount++;
+        }
+      });
+
+      // 显示/隐藏空提示
+      if (emptyTip) {
+        emptyTip.style.display = visibleCount === 0 ? '' : 'none';
+      }
+
+      // 滚动到列表顶部
+      if (tag !== 'all') {
+        postList.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    // 点击标签筛选
+    btns?.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tag = (btn as HTMLElement).dataset.tag || 'all';
+        // 如果点击当前已激活的标签，则回到全部
+        filterPosts(tag === activeTag && tag !== 'all' ? 'all' : tag);
+      });
+    });
+  </script>
 </BaseLayout>
