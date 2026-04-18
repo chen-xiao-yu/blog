@@ -1,6 +1,6 @@
 ---
 title: "AI API Token 中转站 — 技术方案与功能设计报告"
-description: "国内开发者使用 AI 大模型 API 时面临的 支付门槛、网络限制、管理复杂这三大核心痛点，开发一个Token中转站，这是一篇实现Token中转站的技术报告"
+description: "一个轻量级的 AI API 代理服务，将多个 AI 供应商（OpenAI、Anthropic、DeepSeek 等）统一为兼容 OpenAI 格式的 API 接口，提供用户管理、计费、配额控制和多渠道负载均衡。"
 date: 2026-04-18
 tags: ["AI",  "项目实战"]
 ---
